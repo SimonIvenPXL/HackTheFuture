@@ -13,8 +13,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "rations")
 public class Food {
+    // FOOD PILE CLASS
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private int nutrition;
+    private int totalNutritionPoints;
 }

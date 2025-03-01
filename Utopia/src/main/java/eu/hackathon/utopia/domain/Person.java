@@ -19,8 +19,5 @@ public class Person {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @OneToMany
-    private List<Act> goodActs;
-    private int socialPoints;
-
+    private int nutritionPoints;
 }

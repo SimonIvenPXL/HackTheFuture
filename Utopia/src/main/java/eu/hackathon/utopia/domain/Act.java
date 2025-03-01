@@ -18,5 +18,7 @@ public class Act {
     private Long id;
     private String name;
     private String description;
-    private int points;
+    private int amountOfNutritionPoints;
+    @OneToOne
+    private Person person;
 }
