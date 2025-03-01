@@ -5,10 +5,10 @@
       <ul>
         <li v-for="(act, index) in acts" :key="index" class="kindness-item">
           <div>
-            <h3>{{ act.title }}</h3>
+            <h3>{{ act.name }}</h3>
             <p>{{ act.description }}</p>
           </div>
-          <button @click="upvote(index)">Upvote ({{ act.upvotes }})</button>
+          <button @click="upvote(act.id, index)">Upvote ({{ act.amountOfNutritionPoints }})</button>
         </li>
       </ul>
     </div>
@@ -16,8 +16,8 @@
       <h2 class="title">Share a Random Act of Kindness</h2>
       <form @submit.prevent="submitKindness">
         <div class="form-group">
-          <label for="title">Title:</label>
-          <input type="text" id="title" v-model="title" required />
+          <label for="name">Title:</label>
+          <input type="text" id="name" v-model="name" required />
         </div>
         <div class="form-group">
           <label for="description">Description:</label>
@@ -30,35 +30,59 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "KindnessForm",
-  data() {
-    return {
-      title: "",
-      description: "",
-      message: "",
-      acts: [
-        { title: "Helping a stranger", description: "Helped carry groceries for an elderly person.", upvotes: 5 },
-        { title: "Donated books", description: "Gave away books to a local library.", upvotes: 3 },
-        { title: "Paid for someone's coffee", description: "Covered the cost of a coffee for the person behind in line.", upvotes: 7 }
-      ]
-    };
-  },
-  methods: {
-    submitKindness() {
-      if (this.title && this.description) {
-        this.acts.push({ title: this.title, description: this.description, upvotes: 0 });
-        this.message = `Thank you for sharing: "${this.title}"`;
-        this.title = "";
-        this.description = "";
-      }
-    },
-    upvote(index) {
-      this.acts[index].upvotes++;
-    }
-  },
+<script setup>
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+
+const name = ref('');
+const description = ref('');
+const message = ref('');
+const acts = ref([]);
+
+const fetchActs = async () => {
+  try {
+    const response = await axios.get('http://localhost:8080/api/act');
+    acts.value = response.data;
+  } catch (error) {
+    console.error('Error fetching acts:', error);
+  }
 };
+
+const submitKindness = async () => {
+  try {
+    const newAct = {
+      name: name.value,
+      description: description.value,
+      amountOfNutritionPoints: 0,
+      personId: 1
+    };
+    const response = await axios.post('http://localhost:8080/api/act', newAct);
+    acts.value.push(response.data);
+    message.value = `Thank you for sharing: "${name.value}"`;
+    name.value = '';
+    description.value = '';
+  } catch (error) {
+    console.error('Error submitting act:', error);
+    message.value = 'There was an error submitting your act.';
+  }
+};
+
+const upvote = async (actId, index) => {
+  try {
+    // Send PUT request to upvote the act
+    const response = await axios.put(`http://localhost:8080/api/person/${actId}/upvote`);
+
+    // Update the act in the frontend
+    acts.value[index].amountOfNutritionPoints = response.data.amountOfNutritionPoints;
+    console.log(`Upvoted act: ${acts.value[index].name}`);
+  } catch (error) {
+    console.error('Error upvoting act:', error);
+  }
+}
+
+onMounted(() => {
+  fetchActs();
+});
 </script>
 
 <style scoped>

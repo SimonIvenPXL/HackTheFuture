@@ -22,10 +22,27 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import KindnessForm from './components/ActForm.vue';
+import axios from "axios";
 
-const currency = ref('10');
+const currency = ref('0');
+
+const fetchPerson = async () => {
+  try {
+    const response = await axios.get(`http://localhost:8080/api/person/${1}`);
+    currency.value = response.data.nutritionPoints; // Assuming nutritionPoints is in the response
+  } catch (error) {
+    console.error("Error fetching person:", error);
+    // Handle the error, e.g., set currency to 0 or show an error message
+    currency.value = 0;
+  }
+};
+
+onMounted(() => {
+  fetchPerson();
+});
+
 </script>
 
 <style scoped>

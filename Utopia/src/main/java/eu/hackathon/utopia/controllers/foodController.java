@@ -6,15 +6,13 @@ import eu.hackathon.utopia.repositories.FoodRepository;
 import eu.hackathon.utopia.repositories.PersonRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Random;
 
 @RestController
 @RequestMapping("/api/food")
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequiredArgsConstructor
 public class foodController {
     private final FoodRepository foodRepository;

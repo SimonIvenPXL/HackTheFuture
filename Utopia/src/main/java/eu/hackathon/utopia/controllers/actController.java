@@ -16,6 +16,7 @@ import java.util.Random;
 
 @RestController
 @RequestMapping("/api/act")
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequiredArgsConstructor
 public class actController {
     private final ActRepository actRepository;
@@ -31,12 +32,12 @@ public class actController {
         Person person = personRepository.findById(dto.getPersonId()).orElseThrow();
         act.setPerson(person);
 
-        Random random = new Random();
-        int randomAmount = 1 + random.nextInt(6);
-
-        act.setAmountOfNutritionPoints(randomAmount);
+        act.setAmountOfNutritionPoints(100);
 
         actRepository.save(act);
+
+        person.setNutritionPoints(person.getNutritionPoints() + 100);
+        personRepository.save(person);
 
         return ResponseEntity.ok(act);
     }

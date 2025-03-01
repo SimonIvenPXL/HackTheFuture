@@ -1,6 +1,7 @@
 package eu.hackathon.utopia.controllers;
 
 
+import eu.hackathon.utopia.domain.Act;
 import eu.hackathon.utopia.domain.Person;
 import eu.hackathon.utopia.repositories.ActRepository;
 import eu.hackathon.utopia.repositories.PersonRepository;
@@ -12,9 +13,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/person")
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequiredArgsConstructor
 public class personController {
     private final PersonRepository personRepository;
+    private final ActRepository actRepository;
 
     @PostMapping
     public ResponseEntity<Person> createPerson(@RequestBody personDto personDto) {
@@ -40,12 +43,20 @@ public class personController {
         return ResponseEntity.ok(person);
     }
 
-    @PutMapping(path = "/{id}")
-    public ResponseEntity<Person> addPoints(@PathVariable Long id, @RequestBody int nutritionPoints) {
-        Person person = personRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Could not find person"));
-        person.setNutritionPoints(person.getNutritionPoints() + nutritionPoints);
-        personRepository.save(person);
-        return ResponseEntity.ok(person);
+    @PutMapping(path = "/{actId}/upvote")
+    public ResponseEntity<Act> upvoteAct(@PathVariable Long actId) {
+        Act act = actRepository.findById(actId).orElseThrow(() -> new IllegalArgumentException("Could not find act"));
+
+        // Increase the amountOfNutritionPoints for the associated person
+        Person person = act.getPerson();
+        person.setNutritionPoints(person.getNutritionPoints() + 1); // Increment by 1 for an upvote
+        personRepository.save(person); // Save the updated person
+
+        // Optionally, you can also update the act itself if needed
+        act.setAmountOfNutritionPoints(act.getAmountOfNutritionPoints() + 1);
+        actRepository.save(act);
+
+        return ResponseEntity.ok(act); // Return the updated act
     }
 
 }
