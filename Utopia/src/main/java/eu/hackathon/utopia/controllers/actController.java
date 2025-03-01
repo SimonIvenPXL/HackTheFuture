@@ -32,7 +32,7 @@ public class actController {
         act.setPerson(person);
 
         Random random = new Random();
-        int randomAmount = 1 + random.nextInt(6);
+        int randomAmount = 100 + random.nextInt(51);
 
         act.setAmountOfNutritionPoints(randomAmount);
 
