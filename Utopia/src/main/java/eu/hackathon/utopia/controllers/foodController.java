@@ -31,7 +31,7 @@ public class foodController {
 
     @PutMapping
     public ResponseEntity<Food> addDay() {
-        Food food = foodRepository.findAll().getFirst();
+        Food food = foodRepository.findAll().get(0);
 
         // Generate a random number between 8000 and 10000
         Random random = new Random();
@@ -46,7 +46,7 @@ public class foodController {
 
     @PutMapping(path = "/take")
     public ResponseEntity<Food> removeFromPile(int nutritionPoints, Long personId) {
-        Food food  = foodRepository.findAll().getFirst();
+        Food food  = foodRepository.findAll().get(0);
         Person person = personRepository.findById(personId).orElseThrow();
 
         if (person.getNutritionPoints() < nutritionPoints) {

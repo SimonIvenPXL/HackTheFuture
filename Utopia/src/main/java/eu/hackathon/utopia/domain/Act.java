@@ -19,6 +19,7 @@ public class Act {
     private String name;
     private String description;
     private int amountOfNutritionPoints;
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "person_id", nullable = false) // Ensure nullable=false is needed
     private Person person;
 }
